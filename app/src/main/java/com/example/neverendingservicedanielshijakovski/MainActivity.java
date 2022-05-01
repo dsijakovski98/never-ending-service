@@ -1,14 +1,25 @@
 package com.example.neverendingservicedanielshijakovski;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.RequiresApi;
 
+import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+import com.example.neverendingservicedanielshijakovski.restarter.RestartServiceBroadcastReceiver;
+
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+        finish();
     }
 }
