@@ -12,9 +12,7 @@ import androidx.annotation.RequiresApi;
 import com.example.neverendingservicedanielshijakovski.Globals;
 import com.example.neverendingservicedanielshijakovski.ProcessMainClass;
 
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class JobService extends android.app.job.JobService {
-    private static final String TAG= JobService.class.getSimpleName();
     private static RestartServiceBroadcastReceiver restartSensorServiceReceiver;
 
     @Override
@@ -22,18 +20,19 @@ public class JobService extends android.app.job.JobService {
         ProcessMainClass bck = new ProcessMainClass();
         bck.launchService(this);
         registerRestarterReceiver();
-
         return false;
     }
 
     private void registerRestarterReceiver() {
 
-        if (restartSensorServiceReceiver == null)
-            restartSensorServiceReceiver = new RestartServiceBroadcastReceiver();
-        else try{
-            unregisterReceiver(restartSensorServiceReceiver);
-        } catch (Exception e){
-            // not registered
+        try {
+            if (restartSensorServiceReceiver == null) {
+                restartSensorServiceReceiver = new RestartServiceBroadcastReceiver();
+            } else {
+                unregisterReceiver(restartSensorServiceReceiver);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         // give the time to run
@@ -48,23 +47,18 @@ public class JobService extends android.app.job.JobService {
                 try {
                     getApplicationContext().registerReceiver(restartSensorServiceReceiver, filter);
                 } catch (Exception ex) {
-                    // handle error here
+                    ex.printStackTrace();
                 }
             }
         }, 1000);
 
     }
 
-    /**
-     * called if Android kills the job service
-     * @param jobParameters parameters for the job
-     * @return boolean
-     */
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        Log.i(TAG, "Stopping job");
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
         sendBroadcast(broadcastIntent);
+
         // give the time to run
         new Handler().postDelayed(() -> unregisterReceiver(restartSensorServiceReceiver), 1000);
 

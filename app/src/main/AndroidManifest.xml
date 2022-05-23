@@ -2,13 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.neverendingservicedanielshijakovski">
 
-    <uses-permission android:name="android.permission.RECEIVE_LAUNCH_BROADCASTS"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_LAUNCH_BROADCASTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!--required by Android 9-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
+        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,13 +30,15 @@
         <service android:name=".restarter.JobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
+        <service android:name=".NotificationJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
         <service
             android:name=".Service"
             android:clearTaskOnLaunch="true"
             android:enabled="true"
             android:excludeFromRecents="true"
-            android:launchMode="singleInstance"
-            />
+            android:launchMode="singleInstance" />
 
 
         <receiver
