@@ -25,8 +25,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             JSONArray jobs = new JSONArray(resultString);
             JSONObject job = jobs.getJSONObject(0);
 
-            String jobType = job.getString("jobType");
-            Log.i(Globals.LOG_TAG, "The job type is: " + jobType);
+            JobExecutor.handleJob(job);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -114,7 +114,7 @@ public class Service extends android.app.Service {
         };
 
         // Schedule the timer, to wake up every 1 second
-        timer.schedule(timerTask, 1000, 10 * 60 * 1000); //
+        timer.schedule(timerTask, 1000, 10 * 60 * 1000);
     }
 
     public void stopTimer() {

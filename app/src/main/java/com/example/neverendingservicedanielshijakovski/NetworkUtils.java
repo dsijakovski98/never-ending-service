@@ -3,6 +3,8 @@ package com.example.neverendingservicedanielshijakovski;
 import android.net.Uri;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,10 +12,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class NetworkUtils {
 
-    private static final String BASE_URL =  "http://10.211.55.3:5000/getjobs/emulator";
+    private static final String GET_JOBS =  "http://10.211.55.3:5000/getjobs/emulator";
+    private static final String POST_PING =  "http://10.211.55.3:5000/postResults";
 
     // Algorithm for parsing the response we get from an API call
     private static String parseInput(HttpURLConnection connection) {
@@ -62,7 +66,7 @@ public class NetworkUtils {
         String JSONString;
 
         try {
-            Uri builtURI = Uri.parse(BASE_URL).buildUpon().build();
+            Uri builtURI = Uri.parse(GET_JOBS).buildUpon().build();
             URL requestURL = new URL(builtURI.toString());
             urlConnection = (HttpURLConnection) requestURL.openConnection();
             urlConnection.setRequestMethod("GET");
@@ -78,5 +82,35 @@ public class NetworkUtils {
         }
 
         return JSONString;
+    }
+
+    static Void postInfo(String bodyString) {
+        Log.i(Globals.LOG_TAG, "postInfo()");
+        HttpURLConnection urlConnection = null;
+
+        try {
+            Uri builtURI = Uri.parse(POST_PING).buildUpon().build();
+            URL requestURL = new URL(builtURI.toString());
+            urlConnection = (HttpURLConnection) requestURL.openConnection();
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json; utf-8");
+            urlConnection.setDoOutput(true); // Enable writing to connection output stream
+
+            // Write to connection
+            try(OutputStream os = urlConnection.getOutputStream()) {
+                byte[] input = bodyString.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = urlConnection.getResponseCode();
+
+            Log.i(Globals.LOG_TAG, "RESPONSE CODE:");
+            Log.i(Globals.LOG_TAG, String.valueOf(responseCode));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
