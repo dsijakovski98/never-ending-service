@@ -75,8 +75,6 @@ public class NetworkUtils {
             JSONString = parseInput(urlConnection);
 
         } catch (IOException e) {
-            Log.i(Globals.LOG_TAG, "Nesho bidna");
-            Log.i(Globals.LOG_TAG, e.toString());
             e.printStackTrace();
             return null;
         }
