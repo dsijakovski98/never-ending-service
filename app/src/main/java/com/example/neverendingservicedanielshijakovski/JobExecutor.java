@@ -43,7 +43,7 @@ public class JobExecutor {
         try {
             // Ping command
             // -i flag => time interval
-            int interval = 2; // job.getInt("jobPeriod");
+            int interval = job.getInt("jobPeriod");
 
             // -s flag => packet size
             int packetSize = job.getInt("packetSize");
