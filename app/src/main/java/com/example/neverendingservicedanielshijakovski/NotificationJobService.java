@@ -7,7 +7,7 @@ public class NotificationJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        new ApiAsyncTask().execute();
+        new ApiAsyncTask(this).execute();
         return true;
     }
 

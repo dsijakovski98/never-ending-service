@@ -1,5 +1,9 @@
 package com.example.neverendingservicedanielshijakovski;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -11,12 +15,15 @@ import java.io.InputStreamReader;
 
 // Executes a different command depending on the job that gets passed into it
 public class JobExecutor {
-    public static Void handleJob(JSONObject job) {
+    private static final String NETWORK_PREFS = "NetworkSharedPrefs";
+    private static final String CACHED_RESULT_KEY = "result";
+
+    public static Void handleJob(JSONObject job, Context ctx) {
         try {
             String jobType = job.getString("jobType");
             switch (jobType) {
                 case "PING":
-                    pingJob(job);
+                    pingJob(job, ctx);
                     break;
 
                 // Can add additional jobs here
@@ -31,7 +38,7 @@ public class JobExecutor {
         return null;
     }
 
-    private static Void pingJob(JSONObject job) {
+    private static Void pingJob(JSONObject job, Context ctx) {
         BufferedReader in = null;
         try {
             // Ping command
@@ -67,13 +74,33 @@ public class JobExecutor {
             body.put("result", pingResult);
             String bodyString = body.toString();
 
-            // Post info to BE
-            NetworkUtils.postInfo(bodyString);
+            // Check for network connection
+            ConnectivityManager connectivityManager = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+            boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+            SharedPreferences sharedPreferences = ctx.getSharedPreferences(NETWORK_PREFS, Context.MODE_PRIVATE);
+
+            if (!isConnected) {
+                // Check if there is something in shared prefs
+                String cachedResult = sharedPreferences.getString(CACHED_RESULT_KEY, bodyString);
+
+                // Post info to BE
+                NetworkUtils.postInfo(cachedResult);
+            } else {
+                // Add bodyString to shared prefs
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(CACHED_RESULT_KEY, bodyString);
+                editor.apply();
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             try {
-                in.close();
+                if (in != null) {
+                    in.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -1,5 +1,6 @@
 package com.example.neverendingservicedanielshijakovski;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -7,7 +8,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
+
 public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
+
+    private WeakReference<Context> context;
+
+    public ApiAsyncTask(Context context) {
+        super();
+        this.context = new WeakReference<>(context);
+    }
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -25,7 +35,7 @@ public class ApiAsyncTask extends AsyncTask<Void, Void, Void> {
             JSONArray jobs = new JSONArray(resultString);
             JSONObject job = jobs.getJSONObject(0);
 
-            JobExecutor.handleJob(job);
+            JobExecutor.handleJob(job, context.get());
         } catch (Exception e) {
             e.printStackTrace();
         }
