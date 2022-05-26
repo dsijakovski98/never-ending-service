@@ -65,7 +65,7 @@ public class JobExecutor {
                 result.append(inputLine);
             }
 
-            Log.i(Globals.LOG_TAG, "\nPing result:");
+            Log.i(Globals.LOG_TAG, "Ping result:");
             String pingResult = result.toString();
             Log.i(Globals.LOG_TAG, pingResult);
 
@@ -81,7 +81,7 @@ public class JobExecutor {
 
             SharedPreferences sharedPreferences = ctx.getSharedPreferences(NETWORK_PREFS, Context.MODE_PRIVATE);
 
-            if (!isConnected) {
+            if (isConnected) {
                 // Check if there is something in shared prefs
                 String cachedResult = sharedPreferences.getString(CACHED_RESULT_KEY, bodyString);
 
